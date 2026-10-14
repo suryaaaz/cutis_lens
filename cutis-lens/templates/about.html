@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Methodology{% endblock %}
+{% block content %}
+<section class="container section narrow prose">
+  <h1 class="page-title">About &amp; methodology</h1>
+
+  <h2>Objective</h2>
+  <p>Cutis Lens is an educational prototype that grades acne severity from a facial photo and explains each prediction with a Grad-CAM heatmap. It is not a diagnostic tool.</p>
+
+  <h2>Dataset</h2>
+  <p>ACNE04, a public acne dataset released by Wu et al. (ICCV 2019) containing facial images labelled by severity level (levels 0&ndash;3 as described by Zhang et al., 2024). Splits are stratified, seeded and checked for duplicate-file leakage; the exact split is saved so experiments are reproducible. Labels were verified by the project author against the dataset documentation.</p>
+
+  <h2>Model</h2>
+  <p>An ImageNet-pretrained EfficientNet-B0 (transfer learning) with a new classification head, trained with class-weighted cross-entropy, AdamW, a cosine learning-rate schedule and early stopping on validation macro-F1. Training images receive mild augmentation (flip, small rotation/crop, brightness/contrast); validation and test images are only resized and normalised.</p>
+
+  <h2>Explainable AI</h2>
+  <p>Grad-CAM weights the feature maps of the last convolutional block by the average gradient of the predicted class score, keeps the positive part, and upsamples it onto the photo. Warm colours mark regions that increased the score. <strong>Limitations:</strong> it is a coarse, low-resolution attention map; it explains the model, not the skin; highlighted areas are not proof of a lesion.</p>
+
+  <h2>Measured performance</h2>
+  {% if summary %}
+  <p>Results on the held-out test set ({{ summary.n_test }} images, model <code>{{ summary.architecture }}</code>), read from <code>outputs/evaluation_summary.json</code>:</p>
+  <div class="table-responsive"><table class="table cl-table">
+    <tr><th>Accuracy</th><td>{{ '%.3f'|format(summary.accuracy) }}</td></tr>
+    <tr><th>Macro precision / recall / F1</th><td>{{ '%.3f'|format(summary.macro_precision) }} / {{ '%.3f'|format(summary.macro_recall) }} / {{ '%.3f'|format(summary.macro_f1) }}</td></tr>
+    <tr><th>Quadratic weighted kappa</th><td>{{ '%.3f'|format(summary.quadratic_weighted_kappa) }}</td></tr>
+    {% if summary.roc_auc_ovr_macro is not none %}<tr><th>ROC-AUC (one-vs-rest, macro)</th><td>{{ '%.3f'|format(summary.roc_auc_ovr_macro) }}</td></tr>{% endif %}
+  </table></div>
+  {% else %}
+  <p class="alert alert-cl">No evaluation results exist yet. Train the model and run <code>python -m src.evaluate</code>; the measured numbers will then appear here. No placeholder values are shown.</p>
+  {% endif %}
+
+  <h2>Limitations</h2>
+  <ul>{% for l in limitations %}<li>{{ l }}</li>{% endfor %}</ul>
+
+  <h2>Research references</h2>
+  <ul class="small">
+    <li>Zhang D. et al. (2024). Automatic Acne Detection Model Based on Improved YOLOv7. <em>IEEE Access</em> 12, 194390&ndash;194398. (ACNE04 usage, severity levels, comparison of models.)</li>
+    <li>Balasundaram A. et al. (2024). Genetic Algorithm Optimized Stacking Approach to Skin Disease Detection. <em>IEEE Access</em> 12, 88950&ndash;88962. (Transfer-learning backbones, ensembling, Top-k reporting.)</li>
+    <li>Noronha S. S. et al. (2023). Deep Learning-Based Dermatological Condition Detection: A Systematic Review. <em>IEEE Access</em> 11, 140348&ndash;140381.</li>
+    <li>Mohanty A. et al. (2022). Skin Disease Analysis With Limited Data in Particular Rosacea. <em>IEEE Access</em> 10, 39045&ndash;39068. (Augmentation/transfer learning for small datasets.)</li>
+    <li>Wu X. et al. (2019). Joint acne image grading and counting via label distribution learning. <em>ICCV</em>, 10641&ndash;10650. (ACNE04 dataset.)</li>
+    <li>Selvaraju R. R. et al. (2017). Grad-CAM: Visual explanations from deep networks via gradient-based localization. <em>ICCV</em>. (Not among the supplied papers; verify the citation details.)</li>
+  </ul>
+</section>
+{% endblock %}

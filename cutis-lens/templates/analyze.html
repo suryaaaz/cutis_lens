@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Analyze an image{% endblock %}
+{% block content %}
+<section class="container section narrow">
+  <h1 class="page-title">Analyze a skin image</h1>
+  <p class="text-muted">Upload a clear, well-lit facial photo ({{ allowed_ext|join(', ')|upper }}, up to {{ max_upload_mb }} MB).</p>
+
+  {% if not model_ready %}
+  <div class="alert alert-cl" role="alert"><strong>No trained model is loaded.</strong> {{ model_status }} Analysis is disabled until a model exists, so no fake results are ever shown.</div>
+  {% endif %}
+
+  <div id="error-box" class="alert alert-danger d-none" role="alert"></div>
+
+  <div class="cl-card upload-card" id="dropzone" data-max-mb="{{ max_upload_mb }}" data-api="{{ url_for('api_analyze') }}">
+    <input type="file" id="file-input" class="visually-hidden" accept=".jpg,.jpeg,.png,image/jpeg,image/png">
+    <div id="empty-state" class="drop-empty">
+      <svg viewBox="0 0 48 48" class="drop-icon" aria-hidden="true"><path d="M24 32V14m0 0l-7 7m7-7l7 7M10 36h28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <p class="mb-1"><strong>Drag &amp; drop an image here</strong></p>
+      <p class="text-muted small mb-3">or</p>
+      <button type="button" class="btn btn-outline-cl" id="browse-btn">Browse files</button>
+    </div>
+    <div id="preview-state" class="d-none">
+      <img id="preview" alt="Preview of the selected image" class="preview-img">
+      <p class="small text-muted mt-2 mb-0" id="file-meta"></p>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mt-3">
+    <button type="button" class="btn btn-cl btn-lg" id="analyze-btn" disabled {% if not model_ready %}data-model-missing="1"{% endif %}>
+      <span class="spinner-border spinner-border-sm d-none" id="spinner" aria-hidden="true"></span>
+      <span id="analyze-label">Analyze image</span>
+    </button>
+    <button type="button" class="btn btn-outline-cl btn-lg d-none" id="change-btn">Choose another image</button>
+  </div>
+  <p class="small text-muted mt-3" id="status-line" role="status" aria-live="polite"></p>
+  <div class="disclaimer mt-4" role="note">{{ disclaimer }}</div>
+</section>
+{% endblock %}

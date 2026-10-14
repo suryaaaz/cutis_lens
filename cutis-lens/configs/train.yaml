@@ -1,0 +1,16 @@
+# Training configuration (override any value from the command line, e.g. --epochs 5)
+arch: efficientnet_b0        # efficientnet_b0 | mobilenet_v3_large
+image_size: 224
+epochs: 30
+batch_size: 16
+lr: 0.0003
+weight_decay: 0.0001
+patience: 6                  # early stopping on validation macro-F1
+seed: 42
+num_workers: 0               # keep 0 on Windows
+pretrained: true             # downloads ImageNet weights on first run (needs internet once)
+splits: outputs/splits.json
+data_root: data/ACNE04
+checkpoint: models/best_model.pth
+log_dir: outputs
+device: auto                 # auto | cpu | cuda

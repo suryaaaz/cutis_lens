@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Explainable acne analysis{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-7">
+        <p class="eyebrow">Explainable AI · Dermatology prototype</p>
+        <h1>See <em>why</em> the model says what it says.</h1>
+        <p class="lead">Cutis Lens grades the severity of acne in a facial photo and shows a Grad-CAM heatmap of the regions that influenced the result, so the prediction is never a black box.</p>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a class="btn btn-cl btn-lg" href="{{ url_for('analyze_page') }}">Start analysis</a>
+          <a class="btn btn-outline-cl btn-lg" href="{{ url_for('about') }}">How it works</a>
+        </div>
+        {% if not model_ready %}
+        <div class="alert alert-cl mt-4" role="status"><strong>Model status:</strong> {{ model_status }}</div>
+        {% endif %}
+      </div>
+      <div class="col-lg-5 d-none d-lg-block">
+        <div class="lens-art" aria-hidden="true"><div class="lens-glow"></div><div class="lens-ring"><div class="lens-core"></div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="container section">
+  <h2 class="section-title">How it works</h2>
+  <div class="row g-3">
+    {% for n, t, d in [(1,'Upload','Choose a JPG or PNG facial photo. It is checked, then processed in memory only.'),
+                        (2,'Analyse','A transfer-learning CNN trained on ACNE04 scores each severity category.'),
+                        (3,'Explain','Grad-CAM highlights the image regions that most influenced the prediction.'),
+                        (4,'Review & export','Compare original and heatmap, then download a PDF report.')] %}
+    <div class="col-md-6 col-lg-3"><div class="cl-card h-100"><span class="step-no">{{ n }}</span><h3>{{ t }}</h3><p>{{ d }}</p></div></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="container section">
+  <h2 class="section-title">Features</h2>
+  <div class="row g-3">
+    {% for t, d in [('Severity scores','Confidence for every category, not just the top one.'),
+                    ('Grad-CAM heatmap','Overlay, heatmap-only and side-by-side views.'),
+                    ('Plain-language summary','What the model focused on, and what that does not mean.'),
+                    ('PDF report','Generated from your actual result, with limitations and disclaimer.'),
+                    ('Privacy first','No accounts, no stored photos, results expire automatically.'),
+                    ('Honest by design','No result is shown unless a trained model produced it.')] %}
+    <div class="col-md-6 col-lg-4"><div class="cl-card h-100"><h3>{{ t }}</h3><p>{{ d }}</p></div></div>
+    {% endfor %}
+  </div>
+  <div class="disclaimer mt-4" role="note"><strong>Educational disclaimer.</strong> {{ disclaimer }}</div>
+</section>
+{% endblock %}

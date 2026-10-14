@@ -1,0 +1,23 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+# datasets, weights, user data are never committed
+data/*
+!data/.gitkeep
+!data/README.md
+models/*
+!models/.gitkeep
+outputs/*
+!outputs/.gitkeep
+uploads/
+*.pth
+*.pt
+.vscode/
+.idea/
+models/best_model.pth
+models/model_config.json
+models/class_mapping.json
+outputs/evaluation_summary.json
