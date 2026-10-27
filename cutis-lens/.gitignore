@@ -8,12 +8,9 @@ __pycache__/
 data/*
 !data/.gitkeep
 !data/README.md
-models/*
-!models/.gitkeep
 outputs/*
 !outputs/.gitkeep
 uploads/
-*.pth
 *.pt
 .vscode/
 .idea/
